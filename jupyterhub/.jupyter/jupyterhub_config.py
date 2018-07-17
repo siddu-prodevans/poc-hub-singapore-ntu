@@ -27,8 +27,8 @@ c.LDAPAuthenticator.user_attribute = 'sAMAccountName'
 c.LDAPAuthenticator.lookup_dn_user_dn_attribute = 'sAMAccountName'
 c.LDAPAuthenticator.escape_userdn = False
 
-c.LDAPAuthenticator.lookup_dn_search_user = os.environ['LDAP_SEARCH_USER']
-c.LDAPAuthenticator.lookup_dn_search_password = os.environ['LDAP_SEARCH_PASSWORD']
+c.LDAPAuthenticator.lookup_dn_search_user = "siddu"
+c.LDAPAuthenticator.lookup_dn_search_password = "redhat@123"
 
 student_authenticator = LDAPAuthenticator()
 student_authenticator.server_address = '104.211.78.90'
