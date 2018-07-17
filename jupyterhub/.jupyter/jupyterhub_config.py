@@ -18,7 +18,7 @@ c.JupyterHub.template_paths = ['/opt/app-root/src/templates']
 
 from ldapauthenticator import LDAPAuthenticator
 
-c.LDAPAuthenticator.use_ssl = True
+c.LDAPAuthenticator.use_ssl = False
 c.LDAPAuthenticator.lookup_dn = True
 c.LDAPAuthenticator.lookup_dn_search_filter = '({login_attr}={login})'
 c.LDAPAuthenticator.escape_userdn = False
@@ -31,19 +31,19 @@ c.LDAPAuthenticator.lookup_dn_search_user = os.environ['LDAP_SEARCH_USER']
 c.LDAPAuthenticator.lookup_dn_search_password = os.environ['LDAP_SEARCH_PASSWORD']
 
 student_authenticator = LDAPAuthenticator()
-student_authenticator.server_address = 'student.main.ntu.edu.sg'
-student_authenticator.bind_dn_template = ['student\\{username}']
-student_authenticator.user_search_base = 'DC=student,DC=main,DC=ntu,DC=edu,DC=sg'
+student_authenticator.server_address = '104.211.78.90'
+student_authenticator.bind_dn_template = ['pdcloudex\\{username}']
+student_authenticator.user_search_base = 'DC=pdcloudex,DC=com'
 
-staff_authenticator = LDAPAuthenticator()
-staff_authenticator.server_address = 'staff.main.ntu.edu.sg'
-staff_authenticator.bind_dn_template = ['staff\\{username}']
-staff_authenticator.user_search_base = 'DC=staff,DC=main,DC=ntu,DC=edu,DC=sg'
+#staff_authenticator = LDAPAuthenticator()
+#staff_authenticator.server_address = 'staff.main.ntu.edu.sg'
+#staff_authenticator.bind_dn_template = ['staff\\{username}']
+#staff_authenticator.user_search_base = 'DC=staff,DC=main,DC=ntu,DC=edu,DC=sg'
 
-assoc_authenticator = LDAPAuthenticator()
-assoc_authenticator.server_address = 'assoc.main.ntu.edu.sg'
-assoc_authenticator.bind_dn_template = ['assoc\\{username}']
-assoc_authenticator.user_search_base = 'DC=assoc,DC=main,DC=ntu,DC=edu,DC=sg'
+#assoc_authenticator = LDAPAuthenticator()
+#assoc_authenticator.server_address = 'assoc.main.ntu.edu.sg'
+#assoc_authenticator.bind_dn_template = ['assoc\\{username}']
+#assoc_authenticator.user_search_base = 'DC=assoc,DC=main,DC=ntu,DC=edu,DC=sg'
 
 from jupyterhub.auth import Authenticator
 
@@ -54,7 +54,7 @@ class MultiLDAPAuthenticator(Authenticator):
 
         data['username'] = data['username'].lower()
 
-        if domain == 'student':
+        if domain == 'pdcloudex':
             return student_authenticator.authenticate(handler, data)
         elif domain == 'staff':
             return staff_authenticator.authenticate(handler, data)
@@ -154,23 +154,20 @@ def modify_pod_hook(spawner, pod):
 
 c.KubeSpawner.modify_pod_hook = modify_pod_hook
 
-# Setup services for backups and idle notebook culling.
-
-c.JupyterHub.services = [
-    {
-        'name': 'backup-users',
-        'admin': True,
-        'command': ['backup-user-details', '--backups=/opt/app-root/notebooks/backups'],
-    }
-]
+# Setup culling of idle notebooks if timeout parameter is supplied.
 
 idle_timeout = os.environ.get('JUPYTERHUB_IDLE_TIMEOUT')
 
 if idle_timeout and int(idle_timeout):
-    c.JupyterHub.services.extend([
+    c.JupyterHub.services = [
         {
             'name': 'cull-idle',
             'admin': True,
             'command': ['cull-idle-servers', '--timeout=%s' % idle_timeout],
+        },
+        {
+            'name': 'backup-users',
+            'admin': True,
+            'command': ['backup-user-details', '--backups=/opt/app-root/notebooks/backups'],
         }
-    ])
+]
