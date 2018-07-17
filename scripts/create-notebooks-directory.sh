@@ -1,7 +1,7 @@
 #!/bin/bash
 
-NFS_SERVER_NAME=${NFS_SERVER_NAME:-sds.ntu.edu.sg}
-NFS_SERVER_SHARE=${NFS_SERVER_SHARE:-/NTU/SPMS/openshift/jupyter}
+NFS_SERVER_NAME=${NFS_SERVER_NAME:-52.172.55.182}
+NFS_SERVER_SHARE=${NFS_SERVER_SHARE:-/jupyter}
 
 # Script can optionally be passed the course name and a version number.
 # If not supplied the user will be prompted to supply them. There is no
@@ -38,21 +38,21 @@ if ! [[ $DO_UPDATE =~ ^[Yy]?$ ]]; then
     exit 1
 fi
 
-# Check whether there is any directory already mounted on /mnt, where we
+# Check whether there is any directory already mounted on /tmp, where we
 # want to temporarily mount the NFS share in which notebooks will be
 # stored. If there is, we stop immediately and expect the user to work
 # out why there is a directory mounted and unmount it so we can continue.
 
-if mount | grep " on /mnt " > /dev/null 2>&1; then
-    echo "ERROR: The temporary mount directory /mnt is already in use."
+if mount | grep " on /tmp " > /dev/null 2>&1; then
+    echo "ERROR: The temporary mount directory /tmp is already in use."
     exit 1
 fi
 
-# Now mount the NFS server share where notebooks will be stored on /mnt.
+# Now mount the NFS server share where notebooks will be stored on /tmp.
 # Check whether mounted in a loop in case doesn't show as mounted
 # immediately.
 
-mount "$NFS_SERVER_NAME:$NFS_SERVER_SHARE" /mnt
+mount "$NFS_SERVER_NAME:$NFS_SERVER_SHARE" /tmp
 
 if [ "$?" != "0" ]; then
     echo "ERROR: $NFS_SERVER_NAME:$NFS_SERVER_SHARE could not be mounted."
@@ -62,7 +62,7 @@ fi
 MOUNTED=0
 
 for _ in {1..5}; do
-    if mount | grep "$NFS_SERVER_SHARE on /mnt " > /dev/null 2>&1; then
+    if mount | grep "$NFS_SERVER_SHARE on /tmp " > /dev/null 2>&1; then
         MOUNTED=1
         break
     fi
@@ -70,14 +70,14 @@ for _ in {1..5}; do
 done
 
 if [ "$MOUNTED" != "1" ]; then
-    echo "ERROR: NFS share $NFS_SERVER_SHARE not showing as mounted on /mnt."
+    echo "ERROR: NFS share $NFS_SERVER_SHARE not showing as mounted on /tmp."
     exit 1
 fi
 
 # Now check to see whether the notebooks directory we want to create
 # already exists and fail if it does.
 
-NFS_NOTEBOOKS_DIRECTORY=/mnt/notebooks-$COURSE_NAME-pv$VERSION_NUMBER
+NFS_NOTEBOOKS_DIRECTORY=/tmp/notebooks-$COURSE_NAME-pv$VERSION_NUMBER
 
 if [ -d $NFS_NOTEBOOKS_DIRECTORY ]; then
     echo "ERROR: Directory $NFS_NOTEBOOKS_DIRECTORY already exists."
@@ -112,9 +112,9 @@ fi
 
 # All done, unmount the NFS share. Assume the unmount will be done.
 
-umount /mnt
+umount /tmp
 
 if [ "$?" != "0" ]; then
-    echo "ERROR: Could not unmount the directory /mnt."
+    echo "ERROR: Could not unmount the directory /tmp."
     exit 1
 fi
