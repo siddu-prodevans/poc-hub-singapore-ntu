@@ -28,7 +28,7 @@ c.LDAPAuthenticator.lookup_dn_user_dn_attribute = 'sAMAccountName'
 c.LDAPAuthenticator.escape_userdn = False
 
 c.LDAPAuthenticator.lookup_dn_search_user = "siddu"
-c.LDAPAuthenticator.lookup_dn_search_password = "redhat@123"
+c.LDAPAuthenticator.lookup_dn_search_password = "openshift"
 
 student_authenticator = LDAPAuthenticator()
 student_authenticator.server_address = '104.211.78.90'
