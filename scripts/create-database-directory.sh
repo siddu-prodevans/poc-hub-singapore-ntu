@@ -1,7 +1,7 @@
 #!/bin/bash
 
-NFS_SERVER_NAME=${NFS_SERVER_NAME:-sds.ntu.edu.sg}
-NFS_SERVER_SHARE=${NFS_SERVER_SHARE:-/NTU/SPMS/openshift/jupyterhubdb}
+NFS_SERVER_NAME=${NFS_SERVER_NAME:-52.172.55.182}
+NFS_SERVER_SHARE=${NFS_SERVER_SHARE:-/postgres}
 
 # Script can optionally be passed the course name and a version number.
 # If not supplied the user will be prompted to supply them. The reason
@@ -42,21 +42,21 @@ if ! [[ $DO_UPDATE =~ ^[Yy]?$ ]]; then
     exit 1
 fi
 
-# Check whether there is any directory already mounted on /mnt, where we
+# Check whether there is any directory already mounted on /tmp, where we
 # want to temporarily mount the NFS share in which database will be
 # stored. If there is, we stop immediately and expect the user to work
 # out why there is a directory mounted and unmount it so we can continue.
 
-if mount | grep " on /mnt " > /dev/null 2>&1; then
-    echo "ERROR: The temporary mount directory /mnt is already in use."
+if mount | grep " on /tmp " > /dev/null 2>&1; then
+    echo "ERROR: The temporary mount directory /tmp is already in use."
     exit 1
 fi
 
-# Now mount the NFS server share where database will be stored on /mnt.
+# Now mount the NFS server share where database will be stored on /tmp.
 # Check whether mounted in a loop in case doesn't show as mounted
 # immediately.
 
-mount "$NFS_SERVER_NAME:$NFS_SERVER_SHARE" /mnt
+mount "$NFS_SERVER_NAME:$NFS_SERVER_SHARE" /tmp
 
 if [ "$?" != "0" ]; then
     echo "ERROR: $NFS_SERVER_NAME:$NFS_SERVER_SHARE could not be mounted."
@@ -66,7 +66,7 @@ fi
 MOUNTED=0
 
 for _ in {1..5}; do
-    if mount | grep "$NFS_SERVER_SHARE on /mnt " > /dev/null 2>&1; then
+    if mount | grep "$NFS_SERVER_SHARE on /tmp " > /dev/null 2>&1; then
         MOUNTED=1
         break
     fi
@@ -74,14 +74,14 @@ for _ in {1..5}; do
 done
 
 if [ "$MOUNTED" != "1" ]; then
-    echo "ERROR: NFS share $NFS_SERVER_SHARE not showing as mounted on /mnt."
+    echo "ERROR: NFS share $NFS_SERVER_SHARE not showing as mounted on /tmp."
     exit 1
 fi
 
 # Now check to see whether the database directory we want to create
 # already exists and fail if it does.
 
-NFS_DATABASE_DIRECTORY=/mnt/database-$COURSE_NAME-pv$VERSION_NUMBER
+NFS_DATABASE_DIRECTORY=/tmp/database-$COURSE_NAME-pv$VERSION_NUMBER
 
 if [ -d $NFS_DATABASE_DIRECTORY ]; then
     echo "ERROR: Directory $NFS_DATABASE_DIRECTORY already exists."
@@ -116,9 +116,9 @@ fi
 
 # All done, unmount the NFS share. Assume the unmount will be done.
 
-umount /mnt
+umount /tmp
 
 if [ "$?" != "0" ]; then
-    echo "ERROR: Could not unmount the directory /mnt."
+    echo "ERROR: Could not unmount the directory /tmp."
     exit 1
 fi
