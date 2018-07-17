@@ -28,12 +28,12 @@
         {
             "name": "NFS_SERVER_NAME",
             "required": true,
-            "value": "sds.ntu.edu.sg"
+            "value": "52.172.55.182"
         },
         {
             "name": "NFS_SERVER_SHARE",
             "required": true,
-            "value": "/NTU/SPMS/openshift/jupyter"
+            "value": "/jupyter"
         }
     ],
     "objects": [
