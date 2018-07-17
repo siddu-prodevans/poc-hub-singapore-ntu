@@ -63,7 +63,7 @@
         },
         {
             "name": "POSTGRESQL_VOLUME_SIZE",
-            "value": "512Mi",
+            "value": "1Gi",
             "required": true
         },
         {
@@ -180,7 +180,7 @@
                 "source": {
                     "type": "Git",
                     "git": {
-                        "uri": "https://github.com/jupyter-on-openshift/jupyterhub-quickstart.git"
+                        "uri": "https://github.com/jupyter-on-openshif/jupyterhub-quickstart.git"
                     }
                 },
                 "strategy": {
