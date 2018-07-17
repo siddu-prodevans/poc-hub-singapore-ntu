@@ -1,7 +1,7 @@
 #!/bin/bash
 
-NFS_SERVER_NAME=${NFS_SERVER_NAME:-sds.ntu.edu.sg}
-NFS_SERVER_SHARE=${NFS_SERVER_SHARE:-/NTU/SPMS/openshift/jupyterhubdb}
+NFS_SERVER_NAME=${NFS_SERVER_NAME:-52.172.55.182}
+NFS_SERVER_SHARE=${NFS_SERVER_SHARE:-/postgres}
 
 # Assumed that a project is used for each course and the name of the
 # course is used for the project name. Inside of the project, it is
