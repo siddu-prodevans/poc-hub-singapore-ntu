@@ -28,7 +28,7 @@
         {
             "name": "NFS_SERVER_NAME",
             "required": true,
-            "value": "52.172.55.182"
+            "value": "10.128.2.12"
         },
         {
             "name": "NFS_SERVER_SHARE",
