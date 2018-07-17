@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NFS_SERVER_NAME=${NFS_SERVER_NAME:-52.172.55.182}
+NFS_SERVER_NAME=${NFS_SERVER_NAME:-10.128.2.1}
 NFS_SERVER_SHARE=${NFS_SERVER_SHARE:-/jupyter}
 
 # Script can optionally be passed the course name and a version number.
