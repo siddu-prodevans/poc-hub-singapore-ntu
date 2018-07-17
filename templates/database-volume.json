@@ -23,17 +23,17 @@
         {
             "name": "STORAGE_CAPACITY",
             "required": true,
-            "value": "512Mi"
+            "value": "1Gi"
         },
         {
             "name": "NFS_SERVER_NAME",
             "required": true,
-            "value": "sds.ntu.edu.sg"
+            "value": "52.172.55.182"
         },
         {
             "name": "NFS_SERVER_SHARE",
             "required": true,
-            "value": "/NTU/SPMS/openshift/jupyterhubdb"
+            "value": "/postgres"
         }
     ],
     "objects": [
